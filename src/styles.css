@@ -1,0 +1,31 @@
+/* src/styles.css */
+:root{
+  --bg:#FBF7F7;
+  --card:#fff;
+  --accent: #f1c7d6;
+  --text:#222;
+}
+
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{
+  margin:0;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Times New Roman", serif;
+  color:var(--text);
+  background: radial-gradient(circle at 10% 10%, rgba(241,199,214,0.12), transparent 15%),
+              radial-gradient(circle at 90% 90%, rgba(210,230,255,0.08), transparent 18%),
+              var(--bg);
+}
+
+/* small helpers so you can see changes instantly */
+.site-header{ padding:28px 64px; }
+.intro{ text-align:center; padding:70px 20px; }
+.intro h1{ font-size:64px; margin:0; letter-spacing:0.02em; }
+.container{ max-width:1200px; margin:40px auto; padding:0 24px; }
+.card{
+  background:var(--card);
+  border-radius:14px;
+  padding:28px;
+  box-shadow: 0 8px 30px rgba(15,15,15,0.06);
+  margin:14px;
+}
