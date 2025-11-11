@@ -1,65 +1,111 @@
 // src/PoemView.jsx
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from "react";
 
-export default function PoemView({ list, index, onClose, onJump }) {
-  const [content, setContent] = useState('Loading...')
-  const [loading, setLoading] = useState(true)
+export default function PoemView({ language, poem, index, total, onBack, onPrev, onNext }) {
+  const [text, setText] = useState("");
+  const [loading, setLoading] = useState(true);
+  const abortRef = useRef(null);
+  const [key, setKey] = useState(0); // for fade-in
 
-  const item = list[index]
   useEffect(() => {
-    let mounted = true
-    setLoading(true)
-    setContent('Loading...')
-    const path = `/poems/${item ? item.file.startsWith('../') ? item.file : item.file : ''}`
-    // try english or urdu path detection: we pass absolute file names; the calling App uses public/poems/{lang}/
-    // But our poems.js filenames are only file names -- we need to determine subfolder; we can read from list path.
-    // To keep it simple: attempt two locations:
-    const tryPaths = [
-      `/poems/english/${item.file}`,
-      `/poems/urdu/${item.file}`,
-      `/poems/${item.file}`,
-    ]
-    ;(async ()=>{
-      for(const p of tryPaths){
+    if (!poem) return;
+    setLoading(true);
+    setText("");
+    setKey(k => k + 1);
+
+    // cancel previous if any
+    if (abortRef.current) {
+      try { abortRef.current.abort(); } catch(e) {}
+    }
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    const file = poem.file ?? poem.title; // poem.file should be exact filename (with extension)
+    const basePath = `/poems/${language}/`;
+
+    // build candidate filename variants (plain, encoded, underscores, lowercased)
+    const candidates = [
+      file,
+      encodeURIComponent(file),
+      file.replace(/\s+/g, "_"),
+      encodeURIComponent(file.replace(/\s+/g, "_")),
+      file.toLowerCase(),
+      encodeURIComponent(file.toLowerCase()),
+    ].filter((v, i, arr) => v && arr.indexOf(v) === i);
+
+    (async () => {
+      let succeeded = false;
+      for (const cand of candidates) {
+        if (!cand) continue;
+        const url = basePath + cand;
         try {
-          const res = await fetch(p)
-          if(!res.ok) continue
-          const txt = await res.text()
-          if(!mounted) return
-          setContent(txt)
-          setLoading(false)
-          return
-        } catch(e){
-          // try next
+          const res = await fetch(url, { signal: controller.signal });
+          if (!res.ok) {
+            // show status in console; keep trying others
+            console.warn(`Poem fetch ${url} -> ${res.status}`);
+            continue;
+          }
+          const t = await res.text();
+          setText(t);
+          setLoading(false);
+          succeeded = true;
+          break;
+        } catch (err) {
+          if (err.name === "AbortError") {
+            // aborted — exit quietly
+            return;
+          }
+          console.warn("poem fetch error", url, err);
         }
       }
-      if(mounted){
-        setContent('Could not load poem.')
-        setLoading(false)
-      }
-    })()
-    return ()=> mounted=false
-  }, [item])
 
-  if(!item) return null
+      if (!succeeded) {
+        setText("Sorry — could not load this poem. Check console for fetch paths and errors.");
+        setLoading(false);
+      }
+    })();
+
+    return () => {
+      try { controller.abort(); } catch (e) {}
+      abortRef.current = null;
+    };
+  }, [poem, language]);
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" onClick={(e)=>e.stopPropagation()}>
-        <h2 className="poem-title">{item.title}</h2>
-        <div className="poem-body" aria-live="polite">
-          {loading ? <div className="muted">Loading...</div> :
-            <pre>{content}</pre>
-          }
+    <div className="poem-modal-overlay" role="dialog" aria-modal="true">
+      <div className="poem-modal">
+        <h2 className="poem-title">{poem?.title || "Untitled"}</h2>
+
+        <div className={`poem-body fade-in`} key={key}>
+          {loading ? (
+            <div className="poem-loading">Loading...</div>
+          ) : (
+            <pre className="poem-text" aria-label={poem?.title}>{text}</pre>
+          )}
         </div>
 
-        <div className="modal-controls">
-          <button className="control" onClick={()=>onJump(index-1)} disabled={index===0}>← Previous</button>
-          <button className="control" onClick={onClose}>← Back</button>
-          <button className="control" onClick={()=>onJump(index+1)} disabled={index>=list.length-1}>Next →</button>
-        </div>
+        <div className="poem-footer">
+          <button
+            className="btn ghost"
+            onClick={() => { if (index > 0) onPrev(); }}
+            disabled={index === 0}
+            aria-disabled={index === 0}
+          >
+            ← Previous
+          </button>
 
+          <button className="btn primary" onClick={onBack}>← Back</button>
+
+          <button
+            className="btn ghost"
+            onClick={() => { if (index < total - 1) onNext(); }}
+            disabled={index >= total - 1}
+            aria-disabled={index >= total - 1}
+          >
+            Next →
+          </button>
+        </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,124 +1,381 @@
-/* src/App.css - layout & styles */
-.site-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:24px 48px;
-  background: rgba(255,255,255,0.7);
-  border-bottom:1px solid rgba(0,0,0,0.03);
-  position:sticky;
-  top:0;
-  z-index:5;
-}
-.brand{font-family:"Playfair Display", serif; font-size:20px}
-.header-right{display:flex;align-items:center;gap:18px}
-.lang-switch .pill{
-  padding:10px 16px; border-radius:24px; background:transparent; border:1px solid rgba(0,0,0,0.06);
-}
-.lang-switch .pill.active{
-  background:linear-gradient(135deg,#fff0f4,#f0f6ff);
-  box-shadow:0 6px 12px rgba(200,120,160,0.06);
-  font-weight:600;
-}
-.insta-handle{ color:#e66795; font-weight:700; margin-left:6px }
+/* App.css - full styles (put this file in src/App.css) */
 
-/* Intro full-screen */
-.intro.full{
-  height:calc(100vh - 72px);
+/* ---------------- GLOBAL ---------------- */
+:root{
+  --bg: #fbf7f7;
+  --card: #ffffff;
+  --muted: #666;
+  --accent1: #ffdede;
+  --accent2: #e6e8ff;
+  --text: #111;
+  --radius: 14px;
+  --glass-shadow: 0 30px 90px rgba(30,30,30,0.08);
+}
+
+/* base */
+*{box-sizing:border-box}
+html,body,#root { height:100%; }
+body {
+  margin:0;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color:var(--text);
+  background: radial-gradient(1200px 600px at 10% 10%, rgba(255,220,220,0.04), transparent 10%),
+              radial-gradient(900px 500px at 90% 90%, rgba(220,230,255,0.03), transparent 8%),
+              var(--bg);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* prevent body scroll when intro or modal open */
+body.no-scroll {
+  overflow: hidden;
+}
+
+/* small loading overlay when fetching */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
   display:flex;
   align-items:center;
   justify-content:center;
-  background: radial-gradient(circle at 10% 20%, rgba(255,220,230,0.4), transparent 10%),
-              radial-gradient(circle at 90% 80%, rgba(230,240,255,0.35), transparent 12%);
-  padding:40px;
-}
-.intro-inner{ text-align:center; max-width:900px; margin:0 auto }
-.intro-title{ font-family:"Playfair Display", serif; font-size:88px; margin:0; color:#111 }
-.intro-sub{ color: #666; font-size:18px; margin:18px 0 30px }
-.intro-sub .insta{ display:block; color:#e66795; margin-top:8px; font-weight:700 }
-
-.enter-btn{
-  background:linear-gradient(135deg,#ffdbe6,#e6f0ff);
-  border:none;
-  padding:12px 30px;
-  border-radius:18px;
-  box-shadow:0 10px 20px rgba(0,0,0,0.06);
+  background: rgba(255,255,255,0.6);
+  z-index: 99999;
   font-weight:700;
 }
 
-/* main list */
-.main-list{ padding:36px 64px 120px }
-.grid{
+/* ---------------- INTRO (fullscreen) ---------------- */
+.intro-full{
+  position: fixed;
+  inset: 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9998;
+  background: linear-gradient(180deg, rgba(255,252,252,0.9), rgba(255,250,250,0.95));
+  text-align:center;
+}
+
+.intro-inner{
+  max-width:1000px;
+  width:100%;
+  padding:80px 30px;
+}
+
+.intro-title{
+  font-family: "Playfair Display", Georgia, serif;
+  font-size:88px;
+  margin: 0 0 8px;
+  letter-spacing: -1px;
+  color: #111;
+}
+
+.intro-sub{
+  margin-bottom: 26px;
+  color:#888;
+  font-size:16px;
+}
+
+.intro-quote{
+  margin: 20px auto;
+  max-width:520px;
+  color:#444;
+  font-size:18px;
+  line-height:1.7;
+}
+
+.intro-insta{
+  margin-top:8px;
+  color:#ff7e9f;
+  font-weight:700;
+}
+
+.enter-btn{
+  margin-top:28px;
+  padding:12px 32px;
+  border-radius:20px;
+  background: linear-gradient(135deg,var(--accent1),var(--accent2));
+  border:none;
+  cursor:pointer;
+  font-weight:700;
+  box-shadow: 0 12px 30px rgba(220,170,190,0.15);
+}
+
+/* ---------------- HEADER ---------------- */
+.site-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:22px 48px;
+  background: transparent;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+.brand{
+  font-family: "Playfair Display", Georgia, serif;
+  font-size:22px;
+  color:#222;
+}
+
+.controls{
+  display:flex;
+  gap:18px;
+  align-items:center;
+}
+
+.lang-switch .tab{
+  border:none;
+  padding:10px 16px;
+  border-radius:18px;
+  background: transparent;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.lang-switch .tab.active{
+  background: linear-gradient(135deg,var(--accent1),var(--accent2));
+  box-shadow: 0 10px 26px rgba(220,170,190,0.08);
+}
+
+.insta-link{
+  color:#f07ea0;
+  font-weight:700;
+  text-decoration:none;
+  margin-left:8px;
+}
+
+/* ---------------- MAIN / GRID ---------------- */
+.main-content{
+  padding:36px 60px 120px;
+  min-height: calc(100vh - 120px);
+}
+
+.poem-grid-section{
+  max-width:1200px;
+  margin: 0 auto;
+}
+
+.poem-grid{
   display:grid;
   grid-template-columns: repeat(4, 1fr);
-  gap:28px;
+  gap: 28px;
 }
-.card{
-  background:var(--card);
-  border-radius:16px;
-  padding:26px;
-  box-shadow: 0 14px 30px rgba(20,20,20,0.04);
-  cursor:pointer;
-  transition:transform .22s ease, box-shadow .22s ease;
+
+.poem-card{
+  background: var(--card);
+  border-radius: var(--radius);
+  padding:28px;
+  box-shadow: var(--glass-shadow);
+  cursor: pointer;
   min-height:110px;
+  position:relative;
+  transition: transform .18s ease, box-shadow .18s ease;
 }
-.card:hover{ transform:translateY(-6px); box-shadow:0 20px 40px rgba(20,20,20,0.06) }
-.card h3{ margin:0; font-family:"Playfair Display", serif; font-size:20px }
-.muted{ color:var(--muted); margin-top:10px }
+
+.poem-card:hover{
+  transform: translateY(-6px);
+}
+
+.card-title{
+  margin:0 0 10px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size:20px;
+}
+
+.card-sub{
+  color:var(--muted);
+  font-size:14px;
+}
 
 /* latest badge */
 .badge{
-  background: linear-gradient(135deg,#ffecf0,#ffdbe6);
-  color:#c43a6f;
+  position:absolute;
+  right:14px;
+  top:14px;
+  background:#ffccd6;
+  color:#8a2b3b;
   font-weight:700;
-  font-size:12px;
   padding:6px 10px;
-  border-radius:999px;
-  box-shadow: 0 6px 14px rgba(200,120,160,0.08);
-  margin-left:10px;
+  border-radius:12px;
+  font-size:12px;
 }
 
-/* modal */
-.modal-backdrop{
-  position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
-  background: linear-gradient(180deg, rgba(255,255,255,0.0), rgba(0,0,0,0.18));
-  z-index:50;
-  padding:40px;
+/* responsive grid */
+@media (max-width:1200px){
+  .poem-grid{ grid-template-columns: repeat(3, 1fr); }
 }
-.modal{
-  width:90%;
-  max-width:1100px;
-  background:#fff; border-radius:12px; padding:34px;
-  box-shadow:0 30px 60px rgba(10,10,10,0.18);
-  animation:fadeIn .28s ease;
-  max-height:80vh;
-  display:flex; flex-direction:column;
+@media (max-width:900px){
+  .poem-grid{ grid-template-columns: repeat(2, 1fr); }
 }
-@keyframes fadeIn { from {opacity:0; transform:translateY(10px)} to {opacity:1; transform:none} }
+@media (max-width:560px){
+  .poem-grid{ grid-template-columns: 1fr; padding:0 14px; gap:18px; }
+  .site-header{ padding:14px; }
+  .main-content{ padding:24px 10px 110px; }
+}
 
-.poem-title{ text-align:center; font-family:"Playfair Display", serif; font-size:36px; margin:6px 0 20px }
-.poem-body{ overflow:auto; padding:8px 16px; line-height:1.9; font-size:18px; flex:1 }
-.poem-body pre{ white-space:pre-wrap; font-family:inherit; margin:0; color:#222 }
-
-/* modal controls */
-.modal-controls{ display:flex; gap:18px; justify-content:center; margin-top:18px }
-.control{
-  padding:12px 20px;
-  border-radius:20px;
-  border:none;
-  background:linear-gradient(135deg,#fff0f4,#f0f6ff);
-  box-shadow: 0 12px 22px rgba(0,0,0,0.06);
-  font-weight:700;
+/* ---------------- POEM MODAL (from previous CSS) ---------------- */
+/* overlay */
+.poem-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 20, 20, 0.36);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 24px;
 }
-.control:disabled{ opacity:0.5; cursor:not-allowed }
 
-/* smaller screens */
-@media (max-width:1000px){
-  .grid{ grid-template-columns: repeat(2,1fr) }
-  .intro-title{ font-size:56px }
+/* modal base */
+.poem-modal {
+  width: 900px;
+  max-width: calc(100% - 160px);
+  max-height: calc(100vh - 160px);
+  background: #fff;
+  border-radius: 14px;
+  padding: 36px 48px 110px;
+  box-shadow: 0 30px 80px rgba(30, 30, 30, 0.25);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: transform .25s ease, opacity .25s ease;
+  overflow: hidden;
 }
-@media (max-width:640px){
-  .grid{ grid-template-columns: 1fr }
-  .intro-title{ font-size:36px }
-  .site-header{ padding:12px 18px }
+
+/* mobile adjustments - full-ish screen */
+.poem-modal.mobile {
+  width: calc(100% - 28px);
+  max-width: calc(100% - 28px);
+  height: calc(100vh - 90px);
+  max-height: calc(100vh - 90px);
+  padding: 24px 20px 120px;
+  border-radius: 12px;
+  margin: 0;
+}
+
+/* Title */
+.poem-title {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 40px;
+  margin: 0 0 18px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* poem body container (scroll inside) */
+.poem-body {
+  overflow-y: auto;
+  padding-right: 14px;
+  -webkit-overflow-scrolling: touch;
+  outline: none;
+  max-height: calc(100vh - 270px);
+}
+
+/* each line/paragraph */
+.poem-line {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-size: 20px;
+  line-height: 1.9;
+  margin: 16px 0;
+  color: #222;
+}
+
+/* Controls area - positioned near bottom center */
+.poem-controls {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 18px;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+/* Buttons */
+.btn {
+  border: none;
+  padding: 12px 22px;
+  border-radius: 18px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(200, 150, 170, 0.12);
+  min-width: 120px;
+}
+
+.btn.ghost {
+  background: linear-gradient(135deg, #fff, #fff);
+  color: #333;
+  opacity: 0.98;
+  box-shadow: 0 10px 28px rgba(180, 180, 200, 0.08);
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+.btn.primary {
+  background: linear-gradient(135deg,#ffdede,#e6e8ff);
+  color: #111;
+  min-width: 140px;
+  box-shadow: 0 12px 30px rgba(220, 160, 190, 0.15);
+}
+
+/* mobile: bigger buttons, centered and touch friendly */
+@media (max-width: 768px) {
+  .poem-title {
+    font-size: 34px;
+    margin-bottom: 12px;
+  }
+  .poem-line {
+    font-size: 18px;
+    line-height: 2.2;
+    margin: 12px 0;
+  }
+
+  .poem-controls {
+    bottom: 12px;
+    gap: 12px;
+  }
+  .btn {
+    padding: 14px 20px;
+    border-radius: 16px;
+    min-width: 110px;
+  }
+  .btn.primary {
+    min-width: 120px;
+  }
+
+  .poem-body {
+    max-height: calc(100vh - 220px);
+  }
+}
+
+/* small footer note (optional) */
+.poem-footer-note {
+  position: absolute;
+  left: 16px;
+  bottom: 18px;
+  font-size: 13px;
+  color: rgba(0,0,0,0.45);
+}
+
+/* Fade-in animation */
+.fade-in {
+  animation: fadeInScale .28s ease both;
+}
+@keyframes fadeInScale {
+  from { opacity: 0; transform: translateY(8px) scale(.995); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* scrollbar styling (optional, nicer on modern browsers) */
+.poem-body::-webkit-scrollbar { width: 10px; }
+.poem-body::-webkit-scrollbar-thumb {
+  background: linear-gradient(#ccc, #aaa);
+  border-radius: 10px;
+}
+
+/* small screen tweaks for intro look */
+@media (max-width:900px){
+  .intro-title{ font-size:48px; }
+  .intro-inner{ padding:40px 20px; }
+  .intro-quote{ font-size:16px; max-width:320px; }
 }

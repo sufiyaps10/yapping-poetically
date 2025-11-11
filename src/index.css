@@ -1,79 +1,199 @@
-/* src/index.css - global base styles and reset */
+/* index.css - paste/replace relevant parts */
+/* make sure this file is imported by App.jsx or main.jsx */
 
-:root {
-  /* Theme colors */
-  --bg: #fbf7f6;
-  --card: #ffffff;
-  --muted: #7d7d7d;
-  --accent1: #ffdbe6;
-  --accent2: #e6f0ff;
-
-  /* Typography and layout */
-  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-heading: 'Playfair Display', serif;
+:root{
+  --bg:#fbf7f7;
+  --card:#ffffff;
+  --muted:#7b7b7b;
+  --accent1: #f6d7dd;
+  --accent2: #dfe8ff;
+  --shadow: 0 10px 30px rgba(12,12,12,0.06);
+  --glass-shadow: 0 30px 60px rgba(12,12,12,0.08);
   --radius: 14px;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  --font-poem: "Playfair Display", serif;
 }
 
-/* Reset and base */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+html,body,#root{ height:100%; }
+body.no-scroll { overflow: hidden; } /* Prevent scroll while intro visible */
+
+.site {
+  min-height:100vh;
+  background: radial-gradient(circle at 10% 10%, rgba(246,215,220,0.12), transparent 20%),
+              radial-gradient(circle at 90% 90%, rgba(223,232,255,0.10), transparent 20%),
+              var(--bg);
+  font-family: var(--font-sans);
+  color:#111;
 }
 
-html, body, #root {
-  height: 100%;
-  width: 100%;
-  background: var(--bg);
-  color: #222;
-  font-family: var(--font-body);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Intro overlay (full-screen) */
+.intro-overlay {
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.98));
+  pointer-events:auto;
 }
 
-/* Links and buttons */
-a {
-  color: inherit;
-  text-decoration: none;
-  transition: opacity 0.2s ease;
+.intro-card{
+  width:min(900px, 92%);
+  text-align:center;
+  padding:60px 48px;
+  border-radius:18px;
+  background: linear-gradient(120deg, rgba(255,255,255,0.95), rgba(255,255,255,0.98));
+  box-shadow: var(--glass-shadow);
 }
 
-a:hover {
-  opacity: 0.8;
+.intro-title{
+  font-family: var(--font-poem);
+  font-size:72px;
+  margin:0 0 12px;
+  letter-spacing:-1px;
 }
 
-button {
-  cursor: pointer;
-  font-family: inherit;
-  border: none;
-  outline: none;
-  transition: all 0.2s ease;
+.intro-quote{
+  color:var(--muted);
+  margin:8px 0 18px;
+  font-size:18px;
+  line-height:1.6;
 }
 
-button:focus {
-  outline: 2px solid var(--accent2);
-  outline-offset: 3px;
+.intro-ig{
+  color:#e66b88;
+  margin-bottom:22px;
+  font-weight:600;
 }
 
-/* Typography helpers */
-h1, h2, h3, h4, h5 {
-  font-family: var(--font-heading);
-  color: #111;
+.btn.enter{
+  padding:12px 28px;
+  border-radius:999px;
+  border:none;
+  background: linear-gradient(90deg, #ffdfe6, #dfe8ff);
+  box-shadow: 0 10px 24px rgba(136, 100, 120, 0.12);
+  font-weight:700;
 }
 
-p {
-  line-height: 1.7;
-  color: #333;
+/* Hide main background while intro visible for absolute guarantee */
+.hidden-while-intro { filter: none; opacity: 0; pointer-events: none; }
+
+/* header and layout */
+.site-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:26px 48px;
+}
+.brand{ font-family:var(--font-poem); font-size:26px; }
+.lang-controls .lang{ margin-left:12px; padding:8px 14px; border-radius:999px; border:none; background:transparent; }
+.lang-controls .active{ background: linear-gradient(90deg,#fff2f4,#eef5ff); box-shadow:0 6px 20px rgba(0,0,0,0.04); }
+
+/* poems grid */
+.content{ padding:40px 48px 120px; }
+.poems-grid{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:28px;
+}
+.poem-card{
+  background:var(--card);
+  border-radius:18px;
+  padding:28px;
+  box-shadow: var(--shadow);
+  cursor:pointer;
+  position:relative;
+}
+.poem-card h3{ margin:0 0 6px; font-family:var(--font-poem); font-size:20px; }
+.meta{ color:var(--muted); font-size:14px; }
+.badge{ position:absolute; right:16px; top:16px; background:#ffdfe6; padding:6px 10px; border-radius:999px; font-size:12px; }
+
+/* poem modal overlay */
+.poem-modal-overlay{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px;
+  z-index:999;
+  background: rgba(16,16,16,0.28);
 }
 
-/* Utility */
-img {
-  max-width: 100%;
-  display: block;
+.poem-modal{
+  width:min(980px, 96%);
+  max-height:84vh;
+  overflow:hidden;
+  background:var(--card);
+  border-radius:14px;
+  box-shadow: var(--glass-shadow);
+  padding:28px 36px 18px;
+  display:flex;
+  flex-direction:column;
 }
 
-pre {
-  font-family: inherit;
-  white-space: pre-wrap;
-  word-break: break-word;
+.poem-title{ text-align:center; font-family:var(--font-poem); font-size:44px; margin:8px 0 16px; }
+
+.poem-body{
+  flex:1;
+  overflow:auto;
+  padding:14px 8px 20px;
+}
+
+/* poem text */
+.poem-text{
+  white-space:pre-wrap;
+  font-size:18px;
+  line-height:1.9;
+  color:#222;
+  font-family: var(--font-sans);
+  margin:0;
+}
+
+/* loading */
+.poem-loading { color:var(--muted); padding:40px 0; }
+
+/* footer controls inside modal */
+.poem-footer{
+  display:flex;
+  gap:16px;
+  justify-content:center;
+  align-items:center;
+  padding-top:8px;
+}
+.btn{
+  border:none;
+  padding:12px 20px;
+  border-radius:20px;
+  cursor:pointer;
+  background:transparent;
+}
+.btn.primary{ background: linear-gradient(90deg,#ffdfe6,#dfe8ff); font-weight:700; box-shadow: 0 8px 18px rgba(0,0,0,0.06); }
+.btn.ghost{ background:rgba(0,0,0,0.04); }
+
+/* disabled */
+.btn[disabled], .btn.disabled { opacity:0.45; pointer-events:none; }
+
+/* fade in */
+.fade-in{
+  animation: fadeIn 320ms ease both;
+}
+@keyframes fadeIn{ from { opacity:0; transform: translateY(6px); } to { opacity:1; transform:none; } }
+
+/* responsive adjustments */
+@media (max-width: 900px){
+  .poems-grid{ grid-template-columns: repeat(2,1fr);}
+  .intro-title{ font-size:44px; }
+  .poem-title{ font-size:36px; }
+  .poem-body{ max-height:60vh; }
+}
+@media (max-width: 520px){
+  .poems-grid{ grid-template-columns: 1fr; gap:18px; padding:12px; }
+  .intro-card{ padding:36px 18px; border-radius:12px; }
+  .intro-title{ font-size:34px; }
+  .poem-modal{ width:92%; padding:18px; border-radius:12px; }
+  .poem-title{ font-size:30px; }
+  .poem-text{ font-size:18px; line-height:2.2; }
+  .poem-footer{ gap:10px; padding-bottom:14px; }
 }
