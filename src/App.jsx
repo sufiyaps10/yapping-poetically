@@ -1,80 +1,47 @@
 // src/App.jsx
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import PoemView from "./PoemView";
-import "./index.css"; // ensure css import
-
-// replace or import your existing poem lists if you already have them
-const poemsEnglish = [
-  { title: "A Way", file: "A Way.txt" },
-  { title: "Affection", file: "Affection.txt" },
-  { title: "Affection pt2", file: "Affection pt2.txt" },
-  { title: "Eleventh Hour", file: "Eleventh Hour.txt" },
-  { title: "Heart Full Of Poems", file: "Heart Full Of Poems.txt" },
-  { title: "If I Were To Write One Last Poem On You", file: "If I Were To Write One Last Poem On You.txt" },
-  { title: "Rant Fest", file: "Rant Fest.txt" },
-];
-
-const poemsUrdu = [
-  { title: "11th February", file: "11th February.txt" },
-  { title: "Aakhir Kyun", file: "Aakhir Kyun.txt" },
-  { title: "Chaand si haseen", file: "Chaand si haseen.txt" },
-  { title: "Intezaar", file: "Intezaar.txt" },
-  { title: "Kya tum sunogi", file: "Kya tum sunogi.txt" },
-  { title: "Kyu nahi", file: "Kyu nahi.txt" },
-  { title: "Manzar", file: "Manzar.txt" },
-  { title: "Mukhtalif", file: "Mukhtalif.txt" },
-  { title: "Yaad", file: "Yaad.txt" },
-];
+import { englishPoems, urduPoems } from "./poems";
 
 export default function App() {
-  const [language, setLanguage] = useState("english");
-  const [poems, setPoems] = useState(poemsEnglish);
-  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [lang, setLang] = useState("english");
   const [showIntro, setShowIntro] = useState(true);
+  const [openIndex, setOpenIndex] = useState(null);
 
-  useEffect(() => {
-    // set poems depending on language
-    setPoems(language === "english" ? poemsEnglish : poemsUrdu);
-    setSelectedIndex(null);
-  }, [language]);
+  const poemList = lang === "english" ? englishPoems : urduPoems;
 
-  useEffect(() => {
-    // prevent background scroll while intro visible
-    if (showIntro) {
-      document.body.classList.add("no-scroll");
-    } else {
-      document.body.classList.remove("no-scroll");
-    }
-    return () => document.body.classList.remove("no-scroll");
-  }, [showIntro]);
+  const latestId = poemList.length > 0 ? poemList[0].id : null;
 
   function openPoem(i) {
-    setSelectedIndex(i);
+    setOpenIndex(i);
   }
-
-  function onPrev() {
-    if (selectedIndex > 0) setSelectedIndex(s => s - 1);
+  function closePoem() {
+    setOpenIndex(null);
   }
-  function onNext() {
-    if (selectedIndex < poems.length - 1) setSelectedIndex(s => s + 1);
+  function prevPoem() {
+    setOpenIndex((v) => Math.max(0, v - 1));
+  }
+  function nextPoem() {
+    setOpenIndex((v) => Math.min(poemList.length - 1, v + 1));
   }
 
   return (
     <div className="site">
-      {/* Intro overlay */}
+      {/* Intro overlay - fixed and fullscreen */}
       {showIntro && (
         <div className="intro-overlay" role="dialog" aria-modal="true">
-          <div className="intro-card">
+          <div className="intro-inner">
             <h1 className="intro-title">Yapping Poetically</h1>
-            <p className="intro-quote">
-              every poem is my untold wound<br />
-              everytime it's you who I write
-            </p>
+            <p className="intro-sub">every poem is my untold wound<br />everytime it's you who I write</p>
             <p className="intro-ig">- @sufiyaps_10</p>
             <button
               className="btn enter"
-              onClick={() => setShowIntro(false)}
-              aria-label="Enter site"
+              onClick={() => {
+                setShowIntro(false);
+                // ensure no leftover scroll position
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
+              }}
             >
               Enter
             </button>
@@ -82,40 +49,43 @@ export default function App() {
         </div>
       )}
 
-      {/* MAIN CONTENT (hidden visually while intro active) */}
-      <div className={`main-wrap ${showIntro ? "hidden-while-intro" : ""}`}>
-        <header className="site-header">
-          <div className="brand">Yapping Poetically</div>
-          <div className="lang-controls">
-            <button className={`lang ${language === "english" ? "active" : ""}`} onClick={() => setLanguage("english")}>English</button>
-            <button className={`lang ${language === "urdu" ? "active" : ""}`} onClick={() => setLanguage("urdu")}>Urdu (roman)</button>
-          </div>
-        </header>
+      {/* Site header (shown under intro but intro covers it visually) */}
+      <div className="site-header">
+        <div className="logo">Yapping Poetically</div>
 
-        <main className="content">
-          <section className="poems-grid">
-            {poems.map((p, i) => (
-              <article className="poem-card" key={i} onClick={() => openPoem(i)}>
-                <h3>{p.title}</h3>
-                <p className="meta">Click to read</p>
-                {/* example: label latest if index 0 */}
-                {i === 0 && <span className="badge">Latest</span>}
-              </article>
-            ))}
-          </section>
-        </main>
+        <div className="controls">
+          <div className="lang-switch">
+            <button className={`pill ${lang === "english" ? "active" : ""}`} onClick={() => setLang("english")}>English</button>
+            <button className={`pill ${lang === "urdu" ? "active" : ""}`} onClick={() => setLang("urdu")}>Urdu (roman)</button>
+          </div>
+          <div className="ig">@sufiyaps_10</div>
+        </div>
       </div>
 
-      {/* Poem modal */}
-      {selectedIndex !== null && (
+      <main className="main">
+        <section className="grid poems-grid">
+          {poemList.map((p, i) => (
+            <article key={p.id} className="poem-card" onClick={() => openPoem(i)}>
+              <h3 className="card-title">{p.title}</h3>
+              <div className="card-sub">Click to read</div>
+              {p.id === latestId && <span className="badge">Latest</span>}
+            </article>
+          ))}
+        </section>
+      </main>
+
+      <footer className="site-footer">
+        <div className="footer-left">Yapping Poetically</div>
+        <div className="footer-right">@sufiyaps_10</div>
+      </footer>
+
+      {openIndex !== null && (
         <PoemView
-          language={language}
-          poem={poems[selectedIndex]}
-          index={selectedIndex}
-          total={poems.length}
-          onBack={() => setSelectedIndex(null)}
-          onPrev={onPrev}
-          onNext={onNext}
+          poemList={poemList}
+          currentIndex={openIndex}
+          onClose={closePoem}
+          onPrev={prevPoem}
+          onNext={nextPoem}
         />
       )}
     </div>

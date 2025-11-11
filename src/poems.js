@@ -1,22 +1,22 @@
 // src/poems.js
 export const englishPoems = [
-  { title: "A Way", file: "A Way.txt", date: "2025-10-27" },
-  { title: "Affection pt2", file: "Affection pt2.txt", date: "2025-10-28" },
-  { title: "Affection", file: "Affection.txt", date: "2025-10-23" },
-  { title: "Eleventh Hour", file: "Eleventh Hour.txt", date: "2025-10-23" },
-  { title: "Heart Full Of Poems", file: "Heart Full Of Poems.txt", date: "2025-10-23" },
-  { title: "If I Were To Write One Last Poem On You", file: "If I Were To Write One Last Poem On You.txt", date: "2025-10-23" },
-  { title: "Rant Fest", file: "Rant Fest.txt", date: "2025-10-23" },
-]
+  { id: "a-way", title: "A Way", file: "/poems/english/A Way.txt" },
+  { id: "affection-pt2", title: "Affection pt2", file: "/poems/english/Affection pt2.txt" },
+  { id: "affection", title: "Affection", file: "/poems/english/Affection.txt" },
+  { id: "eleventh-hour", title: "Eleventh Hour", file: "/poems/english/Eleventh Hour.txt" },
+  { id: "heart-full", title: "Heart Full Of Poems", file: "/poems/english/Heart Full Of Poems.txt" },
+  { id: "if-i-were", title: "If I Were To Write One Last Poem On You", file: "/poems/english/If I Were To Write One Last Poem On You.txt" },
+  { id: "rant", title: "Rant Fest", file: "/poems/english/Rant Fest.txt" },
+];
 
 export const urduPoems = [
-  { title: "11th February", file: "11th February.txt", date: "2025-10-28" },
-  { title: "Aakhir Kyun", file: "Aakhir Kyun.txt", date: "2025-10-28" },
-  { title: "Chaand si haseen", file: "Chaand si haseen.txt", date: "2025-10-28" },
-  { title: "Intezaar", file: "Intezaar.txt", date: "2025-10-28" },
-  { title: "Kya tum sunogi", file: "Kya tum sunogi.txt", date: "2025-10-28" },
-  { title: "Kyu nahi", file: "Kyu nahi.txt", date: "2025-10-27" },
-  { title: "Manzar", file: "Manzar.txt", date: "2025-10-27" },
-  { title: "Mukhtalif", file: "Mukhtalif.txt", date: "2025-10-27" },
-  { title: "Yaad", file: "Yaad.txt", date: "2025-10-26" },
-]
+  { id: "11th-feb", title: "11th February", file: "/poems/urdu/11th February.txt" },
+  { id: "aakhir-kyun", title: "Aakhir Kyun", file: "/poems/urdu/Aakhir Kyun.txt" },
+  { id: "chaand-si", title: "Chaand si haseen", file: "/poems/urdu/Chaand si haseen.txt" },
+  { id: "intezaar", title: "Intezaar", file: "/poems/urdu/Intezaar.txt" },
+  { id: "kya-tum", title: "Kya tum sunogi", file: "/poems/urdu/Kya tum sunogi.txt" },
+  { id: "kyu-nahi", title: "Kyu nahi", file: "/poems/urdu/Kyu nahi.txt" },
+  { id: "manzar", title: "Manzar", file: "/poems/urdu/Manzar.txt" },
+  { id: "mukhtalif", title: "Mukhtalif", file: "/poems/urdu/Mukhtalif.txt" },
+  { id: "yaad", title: "Yaad", file: "/poems/urdu/Yaad.txt" },
+];
