@@ -1,83 +1,85 @@
-// src/PoemView.jsx
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function PoemView({ poemList, currentIndex, onClose, onPrev, onNext }) {
-  const [loading, setLoading] = useState(true);
+  const poem = poemList[currentIndex];
   const [text, setText] = useState("");
-  const mounted = useRef(true);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState(null);
 
-  // fetch poem whenever currentIndex changes
   useEffect(() => {
-    mounted.current = true;
+    let mounted = true;
     setLoading(true);
+    setErr(null);
     setText("");
-    const file = poemList[currentIndex]?.file;
-    if (!file) {
-      setText("Poem not found.");
-      setLoading(false);
-      return;
-    }
 
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch(file);
-        if (!res.ok) throw new Error("Fetch failed");
-        const txt = await res.text();
-        if (cancelled) return;
-        setText(txt);
-      } catch (e) {
-        if (!cancelled) setText("Could not load poem.");
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
+    // fetch poem file from public folder
+    fetch(poem.file)
+      .then((r) => {
+        if (!r.ok) throw new Error("Failed to load poem");
+        return r.text();
+      })
+      .then((t) => {
+        if (!mounted) return;
+        // normalize newlines and keep paragraphs
+        setText(t.replace(/\r\n/g, "\n"));
+        setLoading(false);
+      })
+      .catch((e) => {
+        if (!mounted) return;
+        setErr("Couldn't load poem.");
+        setLoading(false);
+      });
 
-    return () => {
-      cancelled = true;
+    // handle escape to close
+    const onKey = (ev) => {
+      if (ev.key === "Escape") onClose();
+      if (ev.key === "ArrowLeft") onPrev();
+      if (ev.key === "ArrowRight") onNext();
     };
-  }, [currentIndex, poemList]);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      mounted = false;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [poem.file]);
 
-  // Prevent background scroll while modal is open
+  // ensure underlying page can't be scrolled while modal is open
   useEffect(() => {
-    const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev || "";
-    };
+    return () => (document.body.style.overflow = "");
   }, []);
 
   return (
-    <div className="poem-modal-overlay" role="dialog" aria-modal="true">
-      <div className="poem-modal fade-in" aria-live="polite">
-        <h2 className="poem-title">{poemList[currentIndex].title}</h2>
+    <div className="poem-modal" onClick={onClose} role="dialog" aria-modal="true">
+      <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-body">
+          <h2 className="poem-title">{poem.title}</h2>
 
-        <div className="poem-body" tabIndex={0}>
-          {loading ? (
-            <div className="poem-text poem-loading">Loading...</div>
-          ) : (
-            <div className="poem-text" style={{ whiteSpace: "pre-line" }}>
-              {text}
+          {loading && <div className="poem-loading">Loading…</div>}
+          {err && <div className="poem-error">{err}</div>}
+
+          {!loading && !err && (
+            <div className="poem-content" aria-live="polite">
+              {text.split("\n").map((line, idx) =>
+                line.trim() === "" ? <p key={idx} className="poem-para">&nbsp;</p> : <p key={idx}>{line}</p>
+              )}
             </div>
           )}
         </div>
 
-        {/* sticky footer inside modal so it's always visible */}
-        <div className="poem-footer sticky-footer">
-          <button className="btn ghost" onClick={onPrev} disabled={currentIndex === 0}>
-            ← Previous
-          </button>
+        <div className="modal-footer">
+          <div className="modal-left">
+            <button className="nav-btn" onClick={onPrev} aria-label="Previous poem">← Previous</button>
+          </div>
 
-          <button className="btn ghost" onClick={onClose}>
-            ← Back
-          </button>
+          <div className="modal-center">
+            <button className="nav-btn" onClick={onClose} aria-label="Back">← Back</button>
+          </div>
 
-          <button className="btn primary" onClick={onNext} disabled={currentIndex === poemList.length - 1}>
-            Next →
-          </button>
+          <div className="modal-right">
+            <button className="nav-btn" onClick={onNext} aria-label="Next poem">Next →</button>
+          </div>
         </div>
-
-        <div className="modal-counter">{`${currentIndex + 1}/${poemList.length}`}</div>
       </div>
     </div>
   );
