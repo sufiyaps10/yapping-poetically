@@ -1,9 +1,5 @@
 /* src/index.css
-   Updated: Poem Card Mobile Size Fix, Added Poem Text Transition, Moved Back Button
-   FIX: Adjusted vertical positioning of poem card and navigation footer for mobile.
-   NEW: Navigation arrows fixed to left/right sides of the poem card.
-   FIX: Increased horizontal padding on poem-body to prevent arrow overlap.
-   FIX: Removed overflow: hidden from .poem-card to ensure inner .poem-body can scroll freely.
+   FIX: Re-verified .poem-body scrolling functionality.
 */
 
 /* ---------- base variables ---------- */
@@ -351,10 +347,11 @@ body {
   color: var(--poem-text);
 }
 
-/* CRITICAL FIX: Increased horizontal padding on poem-body to avoid text/arrow overlap */
+/* CRITICAL FIX: The element that scrolls */
 .poem-body { 
     flex:1; 
-    overflow:auto; 
+    /* Ensures vertical scrolling works when content exceeds the available flex space */
+    overflow-y: auto; 
     /* Increased horizontal padding to keep text clear of arrows (60px total on each side) */
     padding: 0 60px; 
 }
