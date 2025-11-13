@@ -373,22 +373,40 @@ body {
   .poem-overlay { padding: 10px; }
   .poem-card { 
     max-height: 95vh; /* Increased max height for more content visibility */
-    padding: 20px; /* Reduced card padding */
+    padding: 15px 10px; /* REDUCED card padding for more space */
   }
   
   /* Mobile Positioning for Back Button */
   .poem-header-controls {
       top: 10px; 
       left: 10px; 
+      z-index: 10;
+  }
+  .poem-header-controls .btn.small {
+      color: var(--poem-text); /* Ensure good color contrast */
   }
 
   .poem-title { 
     font-size: 28px; 
-    margin: 20px 0 18px; /* Reduced top margin for mobile */
+    margin: 20px 0 15px; /* Reduced top margin for mobile */
   }
-  .poem-text { 
+  .poem-body { 
     font-size: 16px; /* Slightly smaller font for more lines on screen */
     line-height:1.8; /* Maintained good line height */
+    padding: 0 5px; /* Added slight horizontal padding to content area */
+  }
+  
+  /* Poem footer (Previous/Next buttons at bottom) */
+  .poem-footer {
+    margin-top: 10px; 
+    padding: 10px 0 5px; /* Compacted vertical padding */
+  }
+  .pager {
+    gap: 8px; /* Slightly reduced gap between buttons */
+  }
+  .btn.small {
+    padding: 6px 12px; /* Make buttons smaller on mobile */
+    font-size: 13px;
   }
   
   .grid { grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); }
