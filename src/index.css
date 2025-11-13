@@ -1,5 +1,6 @@
 /* src/index.css
    Updated: Poem Card Mobile Size Fix, Added Poem Text Transition, Moved Back Button
+   FIX: Adjusted vertical positioning of poem card and navigation footer for mobile.
 */
 
 /* ---------- base variables ---------- */
@@ -262,7 +263,7 @@ body {
   justify-content:center;
   background: rgba(8,8,8,0.18);
   z-index: 10000;
-  padding: 28px;
+  padding: 40px 28px; /* Increased vertical padding for more breathing room */
 }
 .poem-card {
   width: min(1000px, 95%);
@@ -275,7 +276,7 @@ body {
   display:flex;
   flex-direction:column;
   transition: background 300ms ease, color 300ms ease;
-  position: relative; /* Added for absolute positioning of the back button */
+  position: relative; 
 }
 
 /* NEW: Position Back button top-left */
@@ -298,7 +299,7 @@ body {
   font-family: "Merriweather", serif;
   font-size: 40px;
   text-align:center;
-  margin: 30px 0 18px; /* Adjusted top margin to clear the floating button */
+  margin: 30px 0 18px; 
   color: var(--poem-text);
 }
 
@@ -324,12 +325,16 @@ body {
 }
 
 /* footer buttons (small) */
-.poem-footer { margin-top:12px; display:flex; justify-content:center; }
+.poem-footer { 
+  margin-top:12px; 
+  display:flex; 
+  justify-content:center; 
+}
 .pager {
   display: flex;
   justify-content: center;
   gap: 10px; 
-  flex-wrap: nowrap; /* Fix: ensures buttons stay on one line */
+  flex-wrap: nowrap; 
 }
 
 .btn { 
@@ -370,10 +375,14 @@ body {
   .intro-title { font-size: 46px; }
   
   /* Poem card adjustments for better mobile scrolling and visibility */
-  .poem-overlay { padding: 10px; }
+  .poem-overlay { 
+    padding: 10px; 
+    align-items: flex-start; /* Important: Allows the card to be pushed down with margin-top */
+  }
   .poem-card { 
-    max-height: 95vh; /* Increased max height for more content visibility */
-    padding: 15px 10px; /* REDUCED card padding for more space */
+    max-height: 95vh;
+    padding: 15px 10px; 
+    margin-top: 20px; /* Pushed the card down from the top edge */
   }
   
   /* Mobile Positioning for Back Button */
@@ -383,29 +392,29 @@ body {
       z-index: 10;
   }
   .poem-header-controls .btn.small {
-      color: var(--poem-text); /* Ensure good color contrast */
+      color: var(--poem-text); 
   }
 
   .poem-title { 
     font-size: 28px; 
-    margin: 20px 0 15px; /* Reduced top margin for mobile */
+    margin: 20px 0 15px; 
   }
   .poem-body { 
-    font-size: 16px; /* Slightly smaller font for more lines on screen */
-    line-height:1.8; /* Maintained good line height */
-    padding: 0 5px; /* Added slight horizontal padding to content area */
+    font-size: 16px; 
+    line-height:1.8; 
+    padding: 0 5px; 
   }
   
   /* Poem footer (Previous/Next buttons at bottom) */
   .poem-footer {
-    margin-top: 10px; 
-    padding: 10px 0 5px; /* Compacted vertical padding */
+    margin-top: 20px; /* INCREASED margin to lift the buttons away from the poem text */
+    padding: 10px 0 5px; 
   }
   .pager {
-    gap: 8px; /* Slightly reduced gap between buttons */
+    gap: 8px; 
   }
   .btn.small {
-    padding: 6px 12px; /* Make buttons smaller on mobile */
+    padding: 6px 12px; 
     font-size: 13px;
   }
   
