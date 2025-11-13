@@ -3,6 +3,7 @@
    FIX: Adjusted vertical positioning of poem card and navigation footer for mobile.
    NEW: Navigation arrows fixed to left/right sides of the poem card.
    FIX: Increased horizontal padding on poem-body to prevent arrow overlap.
+   FIX: Removed overflow: hidden from .poem-card to ensure inner .poem-body can scroll freely.
 */
 
 /* ---------- base variables ---------- */
@@ -270,7 +271,7 @@ body {
 .poem-card {
   width: min(1000px, 95%);
   max-height: 86vh;
-  overflow: hidden;
+  /* Removed overflow: hidden; to allow inner poem-body to scroll correctly */
   border-radius: 12px;
   padding: 28px;
   background: var(--poem-bg);
