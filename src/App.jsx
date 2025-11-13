@@ -5,8 +5,15 @@ import "./index.css";
 
 /*
   Changes in this version:
+  - Default site theme = 'sepia'
+  - Theme selector uses 3 buttons (Light / Dark / Sepia)
+  - Clicking poem title (h3) opens poem (not only "Click to read")
+  - Intro is shown first (showIntro default true) and locks page scroll until Enter pressed
   - Language buttons and Instagram handle moved below the search bar, centered.
   - Entire poem card is clickable.
+  - ADDED: fadeKey state to trigger transition when changing poems.
+  - UPDATED: The 'Back' button is now placed in the top-left corner of the poem card.
+  - UPDATED: Transition delay increased to 200ms for smoother poem switching.
 */
 
 const SITE_DEFAULT = "sepia"; 
@@ -64,6 +71,9 @@ export default function App() {
   const [poemText, setPoemText] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(null);
+  
+  // NEW: Key to trigger CSS transition when content changes
+  const [fadeKey, setFadeKey] = React.useState(0);
 
   // compute filtered list
   const filtered = React.useMemo(() => {
@@ -82,6 +92,8 @@ export default function App() {
     setError(null);
     setPoemText("");
     setLoading(true);
+    // Increment fadeKey to trigger transition
+    setFadeKey(k => k + 1);
     document.documentElement.setAttribute("data-theme-poem", p.theme || "chill");
     try {
       const res = await fetch(p.file, { cache: "no-store" });
@@ -101,6 +113,7 @@ export default function App() {
     setPoemText("");
     setError(null);
     document.documentElement.removeAttribute("data-theme-poem");
+    setFadeKey(0); // Reset key
   };
 
   const navigateRelative = async (delta) => {
@@ -109,7 +122,14 @@ export default function App() {
     const nextIdx = currentIdx + delta;
     if (nextIdx < 0 || nextIdx >= filtered.length) return;
     const nextId = filtered[nextIdx].id;
-    await openPoem(nextId);
+    
+    // Before loading the next poem, increment the key for fade out
+    setFadeKey(k => k + 1);
+    
+    // Increased timeout to 200ms (matches CSS transition) for smoother fade-out before loading new content
+    setTimeout(() => {
+      openPoem(nextId);
+    }, 200); 
   };
 
   const goInstagram = () => {
@@ -208,18 +228,24 @@ export default function App() {
       {openPoemId && (
         <div className="poem-overlay" onMouseDown={(e) => { if (e.target.classList.contains("poem-overlay")) closePoem(); }}>
           <div className="poem-card">
+            
+            {/* NEW: Back button moved to top-left */}
+            <div className="poem-header-controls">
+                <button className="btn small" onClick={closePoem}>← Back</button>
+            </div>
+
             <h2 className="poem-title">{(poems.find(x => x.id === openPoemId) || {}).title}</h2>
 
             <div className="poem-body">
               {loading && <div className="loading">Loading...</div>}
               {error && <div className="error">{error}</div>}
-              {!loading && !error && <pre className="poem-text">{poemText}</pre>}
+              {/* Added key={fadeKey} to force re-render and trigger transition */}
+              {!loading && !error && <pre key={fadeKey} className="poem-text fade-transition">{poemText}</pre>}
             </div>
 
             <div className="poem-footer">
               <div className="pager">
                 <button className="btn small" onClick={() => navigateRelative(-1)}>← Previous</button>
-                <button className="btn small" onClick={closePoem}>← Back</button>
                 <button className="btn small" onClick={() => navigateRelative(1)}>Next →</button>
               </div>
             </div>
