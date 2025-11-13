@@ -1,5 +1,6 @@
 /* src/index.css
-   FIX: Re-verified .poem-body scrolling functionality.
+   FIX: Poem Card Scrolling Fix. Moved overflow-y: auto from .poem-body to .poem-card 
+        to ensure smooth, full card scrolling on all devices, especially mobile.
 */
 
 /* ---------- base variables ---------- */
@@ -267,12 +268,14 @@ body {
 .poem-card {
   width: min(1000px, 95%);
   max-height: 86vh;
-  /* Removed overflow: hidden; to allow inner poem-body to scroll correctly */
+  /* CRITICAL FIX: Make the entire card scrollable */
+  overflow-y: auto; 
   border-radius: 12px;
   padding: 28px;
   background: var(--poem-bg);
   box-shadow: 0 20px 80px rgba(20,20,20,0.08);
-  display:flex;
+  /* Keep display: flex and flex-direction: column for layout structure */
+  display:flex; 
   flex-direction:column;
   transition: background 300ms ease, color 300ms ease;
   position: relative; 
@@ -347,11 +350,11 @@ body {
   color: var(--poem-text);
 }
 
-/* CRITICAL FIX: The element that scrolls */
+/* Poem body container: Now just holds content, no scrolling or flex-growth */
 .poem-body { 
-    flex:1; 
-    /* Ensures vertical scrolling works when content exceeds the available flex space */
-    overflow-y: auto; 
+    /* Remove flex:1 and overflow-y: auto */
+    /* flex:1; */ 
+    /* overflow-y: auto; */ 
     /* Increased horizontal padding to keep text clear of arrows (60px total on each side) */
     padding: 0 60px; 
 }
@@ -362,7 +365,7 @@ body {
   line-height: 1.85;
   color: var(--poem-muted);
   /* Removed padding here as it's now in poem-body */
-  padding: 6px 0; 
+  padding: 6px 0 30px 0; /* Added bottom padding to poem text */
 }
 
 /* Smooth transition for the poem text content */
@@ -426,6 +429,8 @@ body {
     max-height: 95vh;
     padding: 15px 10px; 
     margin-top: 20px; 
+    /* CRITICAL FIX: Make the entire card scrollable on mobile too */
+    overflow-y: auto;
   }
   
   /* Mobile Positioning for Back Button */
@@ -467,7 +472,7 @@ body {
     font-size: 16px; 
     line-height:1.8; 
     /* Removed padding here */
-    padding: 6px 0; 
+    padding: 6px 0 30px 0; /* Added bottom padding to poem text */
   }
   
   .grid { grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); }
