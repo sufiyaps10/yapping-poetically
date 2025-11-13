@@ -14,6 +14,7 @@ import "./index.css";
   - ADDED: fadeKey state to trigger transition when changing poems.
   - UPDATED: The 'Back' button is now placed in the top-left corner of the poem card.
   - UPDATED: Navigation buttons moved to the left and right sides of the poem card as transparent arrows.
+  - FIX: Body scrolling is now disabled when the poem card is open to prevent background scrolling on mobile devices.
 */
 
 const SITE_DEFAULT = "sepia"; 
@@ -57,12 +58,6 @@ export default function App() {
   // Intro shown by default (first page)
   const [showIntro, setShowIntro] = React.useState(true);
 
-  // Prevent background scroll while intro visible
-  React.useEffect(() => {
-    document.body.style.overflow = showIntro ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [showIntro]);
-
   // Search
   const [query, setQuery] = React.useState("");
 
@@ -74,6 +69,17 @@ export default function App() {
   
   // NEW: Key to trigger CSS transition when content changes
   const [fadeKey, setFadeKey] = React.useState(0);
+
+  // FIX: Prevent background scroll while intro or poem modal is visible
+  React.useEffect(() => {
+    const isModalOpen = showIntro || openPoemId !== null;
+    document.body.style.overflow = isModalOpen ? "hidden" : "";
+    
+    // Cleanup ensures scroll is restored when component unmounts or dependencies change
+    return () => { 
+      document.body.style.overflow = ""; 
+    };
+  }, [showIntro, openPoemId]);
 
   // compute filtered list
   const filtered = React.useMemo(() => {
