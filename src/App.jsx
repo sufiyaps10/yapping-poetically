@@ -5,13 +5,11 @@ import "./index.css";
 
 /*
   Changes in this version:
-  - Default site theme = 'sepia'
-  - Theme selector uses 3 buttons (Light / Dark / Sepia)
-  - Clicking poem title (h3) opens poem (not only "Click to read")
-  - Intro is shown first (showIntro default true) and locks page scroll until Enter pressed
+  - Language buttons and Instagram handle moved below the search bar, centered.
+  - Entire poem card is clickable.
 */
 
-const SITE_DEFAULT = "sepia"; // changed default to sepia as requested
+const SITE_DEFAULT = "sepia"; 
 
 const ROMANTIC_TITLES = new Set([
   "Affection", "Affection pt2", "Her", "A Way", "As I Breathe", "Heart full of poems",
@@ -124,12 +122,7 @@ export default function App() {
         <div className="brand">Yapping Poetically</div>
 
         <div className="controls">
-          <div className="lang-toggle">
-            <button onClick={() => setLang("english")} className={lang === "english" ? "active" : ""}>English</button>
-            <button onClick={() => setLang("urdu")} className={lang === "urdu" ? "active" : ""}>Urdu</button>
-          </div>
-
-          {/* Three aesthetic theme buttons */}
+          {/* Theme buttons remain in the header */}
           <div className="theme-buttons">
             <button
               className={`theme-btn ${siteTheme === "light" ? "on" : ""}`}
@@ -144,8 +137,6 @@ export default function App() {
               onClick={() => setSiteTheme("sepia")}
             >Sepia</button>
           </div>
-
-          <div className="insta" onClick={goInstagram}>@sufiyaps_10</div>
         </div>
       </header>
 
@@ -171,16 +162,39 @@ export default function App() {
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
+        
+        {/* NEW METADATA ROW BELOW SEARCH BAR */}
+        <div className="metadata-row">
+          <button 
+            onClick={() => setLang("english")} 
+            className={`lang-meta-btn ${lang === "english" ? "active" : ""}`}
+          >
+            English
+          </button>
+          <div className="insta-meta" onClick={goInstagram}>
+            @sufiyaps_10
+          </div>
+          <button 
+            onClick={() => setLang("urdu")} 
+            className={`lang-meta-btn ${lang === "urdu" ? "active" : ""}`}
+          >
+            Urdu
+          </button>
+        </div>
 
         <section className="grid">
           {filtered.length === 0 && <div className="no-results">No poems found.</div>}
           {filtered.map((p) => (
-            <article className="card" key={p.id}>
-              {/* Title clickable to open poem */}
-              <h3 className="poem-title-click" onClick={() => openPoem(p.id)}>{p.title}</h3>
+            <article 
+              className="card" 
+              key={p.id} 
+              onClick={() => openPoem(p.id)} 
+              role="button" 
+              tabIndex={0}
+            >
+              <h3 className="poem-title-click">{p.title}</h3>
               <div className="card-sub">
-                {/* small "Click to read" kept visually but not required */}
-                <div className="read-under" onClick={() => openPoem(p.id)} role="button" tabIndex={0}>
+                <div className="read-under" role="button" tabIndex={-1}>
                   Click to read
                 </div>
                 {p.latest && <span className="badge">Latest</span>}

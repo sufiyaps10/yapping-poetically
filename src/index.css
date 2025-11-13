@@ -1,5 +1,5 @@
 /* src/index.css
-   Updated: theme buttons, clickable title, intro behavior styling
+   Updated: Language/Insta moved below search bar
 */
 
 /* ---------- base variables ---------- */
@@ -10,6 +10,9 @@
   --muted: #6e6a64;
   --accent: #e77a9e;
   --shadow: 0 14px 40px rgba(16,16,16,0.06);
+  --shadow-hover: 0 20px 60px rgba(16,16,16,0.1); 
+  --lang-bg: #f9f9f9; /* Light mode default language background */
+  --lang-active-bg: linear-gradient(90deg,#ffdbe9,#d6e5ff);
 }
 
 /* dark */
@@ -20,6 +23,9 @@
   --muted: #9aa2a9;
   --accent: #ff8fb0;
   --shadow: 0 18px 50px rgba(0,0,0,0.55);
+  --shadow-hover: 0 24px 70px rgba(0,0,0,0.7); 
+  --lang-bg: #222222; /* Dark mode default language background */
+  --lang-active-bg: linear-gradient(90deg, #ff8fb0, #a0d8ff); 
 }
 
 /* sepia */
@@ -30,6 +36,9 @@
   --muted: #7a7066;
   --accent: #c9757a;
   --shadow: 0 14px 40px rgba(12,10,8,0.06);
+  --shadow-hover: 0 20px 60px rgba(12,10,8,0.1); 
+  --lang-bg: #eee4d5; /* Sepia mode default language background */
+  --lang-active-bg: linear-gradient(90deg, #f0b5b8, #b8c9f0);
 }
 
 /* poem-card theme variables */
@@ -71,7 +80,7 @@ body {
   transition: background 300ms ease, color 300ms ease;
 }
 
-/* ---------- topbar ---------- */
+/* ---------- topbar (Minimal Header) ---------- */
 .topbar {
   display:flex;
   justify-content:space-between;
@@ -89,20 +98,8 @@ body {
   gap:12px;
 }
 
-/* language toggle */
-.lang-toggle button {
-  border:none;
-  padding:8px 10px;
-  border-radius:10px;
-  background:transparent;
-  color:var(--muted);
-  cursor:pointer;
-}
-.lang-toggle .active {
-  background: linear-gradient(90deg,#ffdfe6,#e6f0ff);
-  color: #2a1f21;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.05);
-}
+/* Language Toggle (Moved to metadata-row, keeping old selector unused) */
+.lang-toggle { display: none; } 
 
 /* theme buttons (aesthetic) */
 .theme-buttons { display:flex; gap:8px; align-items:center; }
@@ -122,8 +119,8 @@ body {
   box-shadow: 0 10px 30px rgba(0,0,0,0.06);
 }
 
-/* insta handle */
-.insta { color: var(--accent); font-weight:700; cursor:pointer; margin-left:6px; }
+/* insta handle (Moved to metadata-row, keeping old selector unused) */
+.insta { display: none; }
 
 /* ---------- Intro (large, centered) ---------- */
 .intro-wrap.intro-large {
@@ -133,7 +130,7 @@ body {
   align-items:center;
   justify-content:center;
   z-index: 9999;
-  background: rgba(8,8,8,0.05);
+  background: var(--site-card); 
 }
 .intro-card {
   width:min(1100px,95%);
@@ -146,7 +143,8 @@ body {
 .intro-title {
   font-family: "Merriweather", serif;
   font-size: clamp(56px, 7vw, 120px);
-  color: rgba(20,20,20,0.92);
+  /* Dark Mode Fix: Use theme text variable */
+  color: var(--text); 
   margin: 0 0 6px;
 }
 .intro-quote {
@@ -166,15 +164,13 @@ body {
   box-shadow: 0 8px 30px rgba(0,0,0,0.06);
 }
 
-/* ---------- main ---------- */
+/* ---------- main & Search Row ---------- */
 .main {
   max-width:1100px;
   margin: 26px auto 60px;
   padding: 0 20px;
 }
-
-/* search */
-.search-row { display:flex; gap:12px; margin-bottom:18px; }
+.search-row { display:flex; gap:12px; margin-bottom:12px; }
 .search-row input {
   width:100%;
   padding:10px 12px;
@@ -183,7 +179,48 @@ body {
   background: var(--site-card);
 }
 
-/* grid */
+/* ---------- NEW METADATA ROW ---------- */
+.metadata-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px 18px 10px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+/* Language Buttons in Metadata Row */
+.lang-meta-btn {
+  border: none;
+  padding: 8px 16px; 
+  border-radius: 999px; /* Pill shape */
+  background: var(--lang-bg);
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 15px; 
+  font-weight: 600; 
+  transition: background 150ms ease, color 150ms ease;
+  min-width: 80px;
+  text-align: center;
+}
+.lang-meta-btn.active {
+  background: var(--lang-active-bg);
+  color: var(--text);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  font-weight: 700;
+}
+
+/* Insta Handle in Metadata Row */
+.insta-meta { 
+  color: var(--accent); 
+  font-weight: 700; 
+  cursor: pointer; 
+  font-size: 18px;
+  flex-grow: 1;
+  text-align: center;
+}
+
+/* ---------- grid (Poem Cards) ---------- */
 .grid {
   display:grid;
   grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
@@ -194,25 +231,32 @@ body {
   padding:18px;
   border-radius:12px;
   box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease;
 }
-.card h3 { font-family: "Merriweather", serif; margin:0 0 8px; font-size:20px; cursor:pointer; color:var(--text); }
-/* make the title clearly clickable */
+.card:hover {
+  transform: translateY(-2px); 
+  box-shadow: var(--shadow-hover); 
+}
+.card h3 { 
+  font-family: "Merriweather", serif; 
+  margin:0 0 8px; 
+  font-size:20px; 
+  color:var(--text); 
+}
 .poem-title-click:hover { text-decoration:underline; color: var(--poem-accent); }
 
 .card-sub { display:flex; justify-content:space-between; align-items:center; gap:8px; }
 
-/* small "Click to read" kept for visual consistency */
 .read-under {
   color: var(--muted);
   font-size: 13px;
-  cursor:pointer;
   padding:6px 8px;
   border-radius:8px;
   transition: background 140ms ease;
 }
 .read-under:hover { background: rgba(0,0,0,0.03); }
 
-/* badge */
 .badge { background:#ffdfe6; color:#9b344a; padding:6px 10px; border-radius:999px; font-size:12px; }
 
 /* ---------- Poem overlay & card ---------- */
@@ -257,8 +301,26 @@ body {
 
 /* footer buttons (small) */
 .poem-footer { margin-top:12px; display:flex; justify-content:center; }
-.btn { background:transparent; padding:12px 20px; border-radius:12px; border:1px solid rgba(0,0,0,0.06); margin: 0 8px; cursor:pointer; }
-.btn.small { padding:8px 14px; font-size:14px; }
+.pager {
+  display: flex;
+  justify-content: center;
+  gap: 10px; 
+  flex-wrap: nowrap; /* Fix: ensures buttons stay on one line */
+}
+
+.btn { 
+  background:transparent; 
+  padding:12px 20px; 
+  border-radius:12px; 
+  border:1px solid rgba(0,0,0,0.06); 
+  margin: 0; 
+  cursor:pointer; 
+  white-space: nowrap; 
+}
+.btn.small { 
+  padding:8px 14px; 
+  font-size:14px; 
+}
 
 /* loading / error */
 .loading, .error { text-align:center; color: var(--muted); }
@@ -285,6 +347,35 @@ body {
   .poem-title { font-size: 28px; }
   .poem-text { font-size: 18px; line-height:1.9; }
   .grid { grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); }
+  
+  /* MOBILE-FRIENDLY HEADER ADJUSTMENTS */
+  .topbar {
+    flex-direction: row; 
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 10px; 
+  }
+  .controls {
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  /* Metadata Row adjustments for mobile */
+  .metadata-row {
+    flex-direction: row; /* Keep elements in a row */
+    padding: 0 5px 15px 5px;
+    gap: 5px;
+  }
+  .lang-meta-btn {
+    padding: 6px 12px;
+    font-size: 14px;
+    min-width: 60px;
+  }
+  .insta-meta {
+    font-size: 16px;
+    padding: 0 5px;
+  }
 }
 
 /* utilities */
