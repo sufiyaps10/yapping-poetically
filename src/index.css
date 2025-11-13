@@ -1,6 +1,8 @@
 /* src/index.css
    Updated: Poem Card Mobile Size Fix, Added Poem Text Transition, Moved Back Button
    FIX: Adjusted vertical positioning of poem card and navigation footer for mobile.
+   NEW: Navigation arrows fixed to left/right sides of the poem card.
+   FIX: Increased horizontal padding on poem-body to prevent arrow overlap.
 */
 
 /* ---------- base variables ---------- */
@@ -263,7 +265,7 @@ body {
   justify-content:center;
   background: rgba(8,8,8,0.18);
   z-index: 10000;
-  padding: 40px 28px; /* Increased vertical padding for more breathing room */
+  padding: 40px 28px; 
 }
 .poem-card {
   width: min(1000px, 95%);
@@ -279,7 +281,7 @@ body {
   position: relative; 
 }
 
-/* NEW: Position Back button top-left */
+/* Back button at top-left */
 .poem-header-controls {
     position: absolute;
     top: 20px; 
@@ -287,13 +289,58 @@ body {
     z-index: 10;
 }
 .poem-header-controls .btn.small {
-    /* Enhanced styling for a floating button */
     background: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
+
+/* NEW: Side Navigation Arrows */
+.nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60px; 
+    height: 60px; 
+    background: rgba(255, 255, 255, 0.4);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--poem-accent);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 5; 
+    transition: background 150ms ease, opacity 150ms ease, transform 150ms ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.nav-arrow:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.7);
+    transform: translateY(-50%) scale(1.05); /* subtle hover scale */
+}
+
+.nav-arrow:disabled {
+    opacity: 0.2;
+    cursor: default;
+    box-shadow: none;
+}
+
+/* PUSHING ARROWS TO THE ABSOLUTE EDGE */
+.nav-arrow.left {
+    left: 0; 
+}
+
+.nav-arrow.right {
+    right: 0; 
+}
+
 
 .poem-title {
   font-family: "Merriweather", serif;
@@ -303,19 +350,25 @@ body {
   color: var(--poem-text);
 }
 
-.poem-body { flex:1; overflow:auto; padding-right:10px; }
+/* CRITICAL FIX: Increased horizontal padding on poem-body to avoid text/arrow overlap */
+.poem-body { 
+    flex:1; 
+    overflow:auto; 
+    /* Increased horizontal padding to keep text clear of arrows (60px total on each side) */
+    padding: 0 60px; 
+}
 .poem-text {
   white-space: pre-wrap;
   font-family: "Merriweather", serif;
   font-size: 20px;
   line-height: 1.85;
   color: var(--poem-muted);
-  padding: 6px 12px;
+  /* Removed padding here as it's now in poem-body */
+  padding: 6px 0; 
 }
 
 /* Smooth transition for the poem text content */
 .poem-text.fade-transition {
-    /* Keeping 300ms fade-in, paired with 200ms delay in JS */
     opacity: 0;
     animation: fadeIn 300ms ease-in forwards; 
 }
@@ -324,17 +377,9 @@ body {
     to { opacity: 1; }
 }
 
-/* footer buttons (small) */
-.poem-footer { 
-  margin-top:12px; 
-  display:flex; 
-  justify-content:center; 
-}
-.pager {
-  display: flex;
-  justify-content: center;
-  gap: 10px; 
-  flex-wrap: nowrap; 
+/* footer is now removed/hidden since nav buttons moved to sides */
+.poem-footer {
+  display: none;
 }
 
 .btn { 
@@ -377,12 +422,12 @@ body {
   /* Poem card adjustments for better mobile scrolling and visibility */
   .poem-overlay { 
     padding: 10px; 
-    align-items: flex-start; /* Important: Allows the card to be pushed down with margin-top */
+    align-items: flex-start; 
   }
   .poem-card { 
     max-height: 95vh;
     padding: 15px 10px; 
-    margin-top: 20px; /* Pushed the card down from the top edge */
+    margin-top: 20px; 
   }
   
   /* Mobile Positioning for Back Button */
@@ -395,27 +440,36 @@ body {
       color: var(--poem-text); 
   }
 
+  /* Mobile arrow size and position */
+  .nav-arrow {
+      width: 40px; 
+      height: 40px; 
+      font-size: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  /* PUSHING ARROWS TO THE ABSOLUTE EDGE */
+  .nav-arrow.left {
+      left: 0; 
+  }
+  .nav-arrow.right {
+      right: 0;
+  }
+
   .poem-title { 
     font-size: 28px; 
     margin: 20px 0 15px; 
   }
+  
+  /* CRITICAL FIX: Mobile Poem Body padding to ensure text clear of arrows */
   .poem-body { 
+    /* 45px padding on the sides for mobile */
+    padding: 0 45px; 
+  }
+  .poem-text { 
     font-size: 16px; 
     line-height:1.8; 
-    padding: 0 5px; 
-  }
-  
-  /* Poem footer (Previous/Next buttons at bottom) */
-  .poem-footer {
-    margin-top: 20px; /* INCREASED margin to lift the buttons away from the poem text */
-    padding: 10px 0 5px; 
-  }
-  .pager {
-    gap: 8px; 
-  }
-  .btn.small {
-    padding: 6px 12px; 
-    font-size: 13px;
+    /* Removed padding here */
+    padding: 6px 0; 
   }
   
   .grid { grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); }

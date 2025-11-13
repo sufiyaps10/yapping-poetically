@@ -13,7 +13,7 @@ import "./index.css";
   - Entire poem card is clickable.
   - ADDED: fadeKey state to trigger transition when changing poems.
   - UPDATED: The 'Back' button is now placed in the top-left corner of the poem card.
-  - UPDATED: Transition delay increased to 200ms for smoother poem switching.
+  - UPDATED: Navigation buttons moved to the left and right sides of the poem card as transparent arrows.
 */
 
 const SITE_DEFAULT = "sepia"; 
@@ -85,6 +85,12 @@ export default function App() {
     return poems.map(p => ({ ...p, theme: resolveTheme(p.title, p.theme) }));
   }, [poems]);
 
+  // Calculate current poem index for navigation
+  const currentIdx = openPoemId ? filtered.findIndex(f => f.id === openPoemId) : -1;
+  const isFirstPoem = currentIdx === 0;
+  const isLastPoem = currentIdx === filtered.length - 1;
+
+
   const openPoem = async (id) => {
     const p = poemsWithTheme.find(x => x.id === id);
     if (!p) return;
@@ -118,7 +124,6 @@ export default function App() {
 
   const navigateRelative = async (delta) => {
     if (!openPoemId) return;
-    const currentIdx = filtered.findIndex(f => f.id === openPoemId);
     const nextIdx = currentIdx + delta;
     if (nextIdx < 0 || nextIdx >= filtered.length) return;
     const nextId = filtered[nextIdx].id;
@@ -229,10 +234,21 @@ export default function App() {
         <div className="poem-overlay" onMouseDown={(e) => { if (e.target.classList.contains("poem-overlay")) closePoem(); }}>
           <div className="poem-card">
             
-            {/* NEW: Back button moved to top-left */}
+            {/* Back button remains in top-left */}
             <div className="poem-header-controls">
                 <button className="btn small" onClick={closePoem}>← Back</button>
             </div>
+
+            {/* Left navigation arrow (Previous) */}
+            <button 
+                className="nav-arrow left" 
+                onClick={(e) => { e.stopPropagation(); navigateRelative(-1); }}
+                disabled={isFirstPoem}
+                aria-label="Previous Poem"
+            >
+                &lt;
+            </button>
+
 
             <h2 className="poem-title">{(poems.find(x => x.id === openPoemId) || {}).title}</h2>
 
@@ -243,12 +259,17 @@ export default function App() {
               {!loading && !error && <pre key={fadeKey} className="poem-text fade-transition">{poemText}</pre>}
             </div>
 
-            <div className="poem-footer">
-              <div className="pager">
-                <button className="btn small" onClick={() => navigateRelative(-1)}>← Previous</button>
-                <button className="btn small" onClick={() => navigateRelative(1)}>Next →</button>
-              </div>
-            </div>
+            {/* Right navigation arrow (Next) */}
+            <button 
+                className="nav-arrow right" 
+                onClick={(e) => { e.stopPropagation(); navigateRelative(1); }}
+                disabled={isLastPoem}
+                aria-label="Next Poem"
+            >
+                &gt;
+            </button>
+            
+            {/* The poem-footer is now removed */}
           </div>
         </div>
       )}
